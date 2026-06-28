@@ -1,0 +1,235 @@
+<!doctype html>
+<html lang="ar" dir="rtl">
+<head>
+<meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1">
+<title>نظام الأصول الثابتة - الملف المعتمد</title>
+<script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/xlsx-js-style@1.2.0/dist/xlsx.bundle.js"></script>
+<style>
+:root{--bg:#f3f6fb;--card:#fff;--ink:#101828;--muted:#667085;--line:#d0d7e2;--main:#0f766e;--main2:#134e4a;--danger:#b42318;--warn:#b54708;--soft:#eef6f5}*{box-sizing:border-box}body{margin:0;background:var(--bg);font-family:Tahoma,Arial,sans-serif;color:var(--ink)}header{background:linear-gradient(135deg,var(--main2),var(--main));color:white;padding:16px 22px;display:flex;gap:12px;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:10}h1{font-size:21px;margin:0}.wrap{max-width:1600px;margin:auto;padding:16px}.nav{display:flex;gap:8px;flex-wrap:wrap}.nav button,.btn{border:0;background:var(--main);color:#fff;border-radius:11px;padding:10px 13px;font-weight:700;cursor:pointer}.nav button{background:rgba(255,255,255,.16)}.nav button.active{background:#fff;color:var(--main2)}.btn.secondary{background:#e8eef7;color:#0f172a}.btn.danger{background:var(--danger)}.btn.warn{background:var(--warn)}.page{display:none}.page.active{display:block}.card{background:var(--card);border:1px solid var(--line);border-radius:16px;padding:15px;box-shadow:0 8px 20px rgba(16,24,40,.04);margin-bottom:13px}.grid{display:grid;grid-template-columns:repeat(4,1fr);gap:12px}.kpi span{color:var(--muted);font-size:13px}.kpi b{display:block;font-size:24px;margin-top:8px}.toolbar{display:flex;gap:8px;flex-wrap:wrap;align-items:center;margin-bottom:10px}input,select,textarea{border:1px solid var(--line);border-radius:10px;padding:10px;background:#fff;min-width:130px;font-family:inherit}table{width:100%;border-collapse:collapse;background:#fff;font-size:13px}th,td{padding:8px;border-bottom:1px solid #e8eef6;text-align:right;white-space:nowrap}th{background:#eef6f5;color:#0f3f3b;position:sticky;top:70px;z-index:2}.scroll{overflow:auto;max-height:62vh;border-radius:14px;border:1px solid var(--line)}.formgrid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px}.formgrid div{display:flex;flex-direction:column;gap:5px}.formgrid label{font-size:12px;color:var(--muted)}.muted{color:var(--muted)}.alert{border:1px solid #fed7aa;background:#fff7ed;color:#9a3412;border-radius:12px;padding:10px;margin:8px 0;line-height:1.7}.ok{border-color:#bbf7d0;background:#f0fdf4;color:#166534}.modal{position:fixed;inset:0;background:rgba(15,23,42,.45);display:none;align-items:center;justify-content:center;z-index:30}.modal .box{background:white;width:min(1100px,96vw);max-height:90vh;overflow:auto;border-radius:18px;padding:18px}.allocRow{display:grid;grid-template-columns:1fr 120px 48px;gap:8px;margin-bottom:8px}.footerPages{display:flex;gap:8px;justify-content:center;margin:12px}.footerPages button{border:1px solid var(--line);background:white;border-radius:10px;padding:8px 11px;cursor:pointer}.footerPages button.active{background:var(--main);color:white}.charts{display:grid;grid-template-columns:1fr 1fr;gap:12px}.bar{height:12px;border-radius:999px;background:#e2e8f0;overflow:hidden}.bar i{display:block;height:100%;background:var(--main)}.pill{background:#ecfeff;color:#155e75;border:1px solid #a5f3fc;border-radius:999px;padding:4px 8px;display:inline-block}.small{font-size:12px}.note{line-height:1.8}.journalScroll th{top:0;z-index:5}.journalScroll{max-height:70vh}.loginScreen{position:fixed;inset:0;background:linear-gradient(135deg,#0f3f3b,#0f766e);z-index:999;display:flex;align-items:center;justify-content:center;padding:20px}.loginBox{width:min(430px,96vw);background:white;border-radius:22px;padding:28px;box-shadow:0 24px 80px rgba(0,0,0,.28);text-align:right}.loginBox h2{margin:0 0 6px;color:#0f3f3b}.loginBox p{color:#667085;margin:0 0 18px}.loginBox input{width:100%;margin:6px 0 12px}.loginBox .btn{width:100%;font-size:16px}.loginErr{color:#b42318;min-height:24px;margin-top:10px}.userBadge{background:rgba(255,255,255,.16);border:1px solid rgba(255,255,255,.25);border-radius:999px;padding:8px 10px;font-size:12px}@media(max-width:900px){header{position:static;display:block}.nav{margin-top:12px}.grid,.formgrid,.charts{grid-template-columns:1fr}.scroll{max-height:55vh}th{top:0}}
+</style>
+</head>
+<body>
+<div id="loginScreen" class="loginScreen">
+  <div class="loginBox">
+    <h2>نظام الأصول الثابتة</h2>
+    <p>برجاء إدخال اسم المستخدم وكلمة المرور</p>
+    <label>اسم المستخدم</label>
+    <input id="loginUser" autocomplete="username" placeholder="admin">
+    <label>كلمة المرور</label>
+    <input id="loginPass" type="password" autocomplete="current-password" placeholder="123456">
+    <button class="btn" onclick="login()">تسجيل الدخول</button>
+    <button class="btn secondary" style="margin-top:8px" onclick="openResetModal()">نسيت كلمة المرور؟</button>
+    <div id="loginErr" class="loginErr"></div>
+    <div class="muted small">المستخدم الافتراضي: admin / 123456</div>
+  </div>
+</div>
+<div id="appRoot" style="display:none">
+<header><h1>نظام الأصول الثابتة - مطابق للملف المعتمد</h1><div class="nav" id="nav"></div></header>
+<div class="wrap">
+<section id="dashboard" class="page active"></section>
+<section id="assets" class="page"></section>
+<section id="depr" class="page"></section>
+<section id="io" class="page"></section>
+<section id="settings" class="page"></section>
+<section id="users" class="page"></section>
+<section id="audit" class="page"></section>
+</div>
+</div>
+<div id="assetModal" class="modal"><div class="box"><h2 id="modalTitle">إضافة أصل</h2><div class="alert ok small">تم ضبط الشاشة على آخر ملف أصول معتمد: مسلسل، مركز التكلفة، المجموعة، تاريخ الشراء، إسم الأصل، عدد الوحدات، اجمالي التكلفة، أيام الاهلاك، نسبة الاهلاك، مجمع الاهلاك، القيمه الصافيه، الاهلاك الشهري، الحالة.</div><form id="assetForm"><input type="hidden" id="editId"><div class="formgrid">
+<div><label>مسلسل</label><input id="serial"></div><div><label>مركز التكلفة</label><input id="costCenter" list="centersList"></div><div><label>المجموعة</label><input id="group" list="groupsList"></div><div><label>تاريخ الشراء</label><input id="purchaseDate" type="date"></div>
+<div><label>إسم الأصل</label><input id="assetName" required></div>
+<div><label>عدد الوحدات</label><input id="qty" type="number" step="any" value="1"></div><div><label>اجمالي التكلفة</label><input id="totalCostInput" type="number" step="any" value="0"></div><div><label>نسبة الاهلاك</label><input id="depRate" type="number" step="any" value="0.20"></div><div><label>مجمع الاهلاك</label><input id="accumDep" type="number" step="any" value="0"></div>
+<div><label>الحالة</label><select id="status"><option>Active</option><option>Inactive</option><option>مباع</option><option>موقوف</option><option>مستهلك بالكامل</option></select></div><div><label>نوع مركز التكلفة</label><select id="allocType" onchange="toggleAlloc()"><option value="single">مركز تكلفة واحد</option><option value="shared">أصل مشترك</option></select></div>
+</div><h3>توزيع الأصل المشترك</h3><div class="alert small">هذا التوزيع يستخدم في قيد الإهلاك فقط. عند تصدير ملف الأصول المعتمد لا تتم إضافة أعمدة جديدة.</div><div id="allocBox"></div><button type="button" class="btn secondary" onclick="addAllocRow()">+ إضافة مركز تكلفة للتوزيع</button><p id="allocSum" class="muted"></p><div class="toolbar"><button class="btn" type="submit">حفظ الأصل</button><button class="btn secondary" type="button" onclick="closeAssetModal()">إلغاء</button></div></form></div></div>
+
+<div id="resetModal" class="modal"><div class="box" style="width:min(520px,96vw)">
+  <h2>استعادة كلمة المرور</h2>
+  <div class="alert small">سيتم إرسال رمز تحقق إلى بريد الاستعادة المعتمد: <b>ahmededitor245@gmail.com</b>. بعد إدخال الرمز يمكنك تعيين كلمة مرور جديدة للمستخدم المطلوب.</div>
+  <div class="formgrid" style="grid-template-columns:1fr">
+    <div><label>اسم المستخدم</label><input id="resetUser" placeholder="admin"></div>
+    <div><label>رمز التحقق</label><input id="resetCode" placeholder="OTP المرسل على البريد"></div>
+    <div><label>كلمة المرور الجديدة</label><input id="resetNewPass" type="password" placeholder="كلمة مرور جديدة"></div>
+  </div>
+  <p id="resetMsg" class="muted small"></p>
+  <div class="toolbar">
+    <button class="btn" onclick="requestPasswordReset()">إرسال رمز التحقق</button>
+    <button class="btn secondary" onclick="applyPasswordReset()">تغيير كلمة المرور</button>
+    <button class="btn secondary" onclick="closeResetModal()">إلغاء</button>
+  </div>
+</div></div>
+<datalist id="groupsList"></datalist><datalist id="centersList"></datalist>
+<script>
+const STORE='fixedAssetsOfficialV1';
+const OFFICIAL_SHEET='جدول الاصول الثابته الجديد';
+const HEADERS=['مسلسل','مركز التكلفة','المجموعة','تاريخ الشراء','إسم الأصل','عدد الوحدات','اجمالي التكلفة','أيام الاهلاك','نسبة الاهلاك','مجمع الاهلاك','القيمه الصافيه','الاهلاك الشهري','الحالة'];
+function hashPass(x){let h=2166136261;String(x||'').split('').forEach(ch=>{h^=ch.charCodeAt(0);h=Math.imul(h,16777619)});return (h>>>0).toString(16)}
+let state=JSON.parse(localStorage.getItem(STORE)||'null')||{assets:[],costCenters:['المستودع الرئيسي للصيدليات','صيدلية لنا التخصصي 21','صيدلية لنا الجمعية 16'],groups:['الكمبيوترات والطابعات وجولات','ثلاجات','ديكورات'],users:[{username:'admin',name:'مدير النظام',password:hashPass('123456'),role:'مدير النظام',active:'نعم'}],settings:{creditMode:'group',ytdMonths:8},audit:[]};
+state.users=(state.users||[]).map(u=>({username:u.username||String(u.name||'admin').trim(),name:u.name||u.username||'مستخدم',password:u.password||hashPass(u.username==='admin'?'123456':'123456'),role:u.role||'عرض فقط',active:u.active||'نعم'}));
+if(!state.users.some(u=>u.username==='admin')) state.users.unshift({username:'admin',name:'مدير النظام',password:hashPass('123456'),role:'مدير النظام',active:'نعم'});
+state.audit=state.audit||[];
+let currentUser=null, lockTimer=null;
+
+let resetRequestId=null;
+function openResetModal(){document.getElementById('resetModal').style.display='flex';document.getElementById('resetUser').value=document.getElementById('loginUser').value||'admin';document.getElementById('resetMsg').textContent='';}
+function closeResetModal(){document.getElementById('resetModal').style.display='none'}
+async function requestPasswordReset(){
+  const username=document.getElementById('resetUser').value.trim();
+  const msg=document.getElementById('resetMsg');
+  if(!username){msg.textContent='أدخل اسم المستخدم أولاً';return}
+  const u=(state.users||[]).find(x=>x.username===username);
+  if(!u){msg.textContent='اسم المستخدم غير موجود داخل الداشبورد';return}
+  try{
+    const res=await fetch('/api/request-reset',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({username,email:'ahmededitor245@gmail.com'})});
+    const data=await res.json();
+    if(!res.ok) throw new Error(data.error||'تعذر إرسال البريد');
+    resetRequestId=data.requestId;
+    msg.textContent=data.devCode ? ('تم إنشاء رمز تجريبي: '+data.devCode+' — عند تشغيل إعدادات البريد سيتم إرساله إلى ahmededitor245@gmail.com') : 'تم إرسال رمز التحقق إلى ahmededitor245@gmail.com';
+  }catch(e){
+    msg.textContent='خاصية البريد تحتاج تشغيل نسخة السيرفر Node.js. تم تجهيزها في ملف المشروع. الخطأ: '+e.message;
+  }
+}
+async function applyPasswordReset(){
+  const username=document.getElementById('resetUser').value.trim();
+  const code=document.getElementById('resetCode').value.trim();
+  const pass=document.getElementById('resetNewPass').value;
+  const msg=document.getElementById('resetMsg');
+  if(!username||!code||!pass){msg.textContent='أدخل اسم المستخدم والرمز وكلمة المرور الجديدة';return}
+  try{
+    const res=await fetch('/api/verify-reset',{method:'POST',headers:{'Content-Type':'application/json'},body:JSON.stringify({requestId:resetRequestId,username,code})});
+    const data=await res.json();
+    if(!res.ok) throw new Error(data.error||'رمز غير صحيح');
+    const i=state.users.findIndex(x=>x.username===username);
+    if(i<0){msg.textContent='المستخدم غير موجود';return}
+    state.users[i].password=hashPass(pass);
+    state.audit=state.audit||[];state.audit.unshift({user:'system',name:'استعادة كلمة المرور',action:'Reset Password',details:username,date:new Date().toLocaleString('ar-SA')});
+    save();
+    msg.textContent='تم تغيير كلمة المرور بنجاح. يمكنك تسجيل الدخول الآن.';
+    setTimeout(closeResetModal,900);
+  }catch(e){msg.textContent='فشل التحقق: '+e.message}
+}
+
+let page='dashboard', assetPage=1, pageSize=50, filters={q:'',cc:'',grp:'',status:''};
+const pages=[['dashboard','لوحة التحكم'],['assets','الأصول الثابتة'],['depr','الإهلاك الشهري'],['io','الاستيراد والتصدير'],['settings','الإعدادات'],['users','المستخدمين'],['audit','سجل العمليات']];
+function save(){localStorage.setItem(STORE,JSON.stringify(state));}
+function can(role){if(!currentUser)return false; if(currentUser.role==='مدير النظام')return true; if(role==='view')return true; if(currentUser.role==='عرض فقط')return false; if(role==='delete')return currentUser.role==='إضافة وتعديل وحذف'; return ['إضافة وتعديل وحذف','إضافة وتعديل فقط'].includes(currentUser.role)}
+function logAction(action,details=''){state.audit.unshift({user:currentUser?.username||'system',name:currentUser?.name||'',action,details,date:new Date().toLocaleString('ar-SA')});state.audit=state.audit.slice(0,500);save()}
+function resetLock(){clearTimeout(lockTimer);lockTimer=setTimeout(()=>logout(true),15*60*1000)}
+document.addEventListener('click',resetLock);document.addEventListener('keydown',e=>{resetLock(); if(e.key==='Enter' && document.getElementById('loginScreen').style.display!=='none') login();});
+function login(){let u=document.getElementById('loginUser').value.trim(), p=document.getElementById('loginPass').value;let found=state.users.find(x=>String(x.username).toLowerCase()===u.toLowerCase()&&x.password===hashPass(p)&&x.active==='نعم');if(!found){document.getElementById('loginErr').textContent='اسم المستخدم أو كلمة المرور غير صحيحة';return}currentUser=found;sessionStorage.setItem('fa_user',found.username);document.getElementById('loginScreen').style.display='none';document.getElementById('appRoot').style.display='block';resetLock();logAction('تسجيل دخول');nav();render()}
+function logout(auto=false){if(currentUser&&!auto)logAction('تسجيل خروج');currentUser=null;sessionStorage.removeItem('fa_user');document.getElementById('appRoot').style.display='none';document.getElementById('loginScreen').style.display='flex';document.getElementById('loginPass').value='';document.getElementById('loginErr').textContent=auto?'تم قفل الشاشة تلقائيًا بعد عدم الاستخدام':''}
+function boot(){let u=sessionStorage.getItem('fa_user');let found=state.users.find(x=>x.username===u&&x.active==='نعم');if(found){currentUser=found;document.getElementById('loginScreen').style.display='none';document.getElementById('appRoot').style.display='block';resetLock();nav();render()}else{document.getElementById('loginScreen').style.display='flex';document.getElementById('appRoot').style.display='none'}}
+function esc(s){return String(s??'').replace(/[&<>"']/g,m=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[m]));}
+function money(n){return Number(n||0).toLocaleString('ar-SA',{minimumFractionDigits:2,maximumFractionDigits:2});}
+function id(){return Date.now().toString(36)+Math.random().toString(36).slice(2,7)}
+function totalCost(a){return Number(a.totalCost||0)}
+function daysDep(a){if(!a.purchaseDate)return Number(a.daysDep||0);let d=new Date(a.purchaseDate+'T00:00:00');let now=new Date();return Math.max(0,Math.floor((now-d)/86400000));}
+function monthlyDep(a){if(String(a.status||'Active').toLowerCase()!=='active')return 0;return totalCost(a)*Number(a.depRate||0)/12;}
+function accumCalc(a){let manual=Number(a.accumDep||0); return manual>0?manual:Math.min(Math.max(0,totalCost(a)-1), totalCost(a)*Number(a.depRate||0)/365*daysDep(a));}
+function nbv(a){return Math.max(1,totalCost(a)-accumCalc(a));}
+function ytdDep(a){return monthlyDep(a)*Number(state.settings.ytdMonths||8)}
+function allocs(a){return (a.allocations&&a.allocations.length)?a.allocations:[{costCenter:a.costCenter||'غير محدد',percent:100}];}
+function nav(){let visible=pages.filter(p=>currentUser?.role==='مدير النظام'||!['settings','users','audit'].includes(p[0]));document.getElementById('nav').innerHTML=visible.map(p=>`<button onclick="go('${p[0]}')" class="${page===p[0]?'active':''}">${p[1]}</button>`).join('')+`<span class="userBadge">${esc(currentUser?.name||'')} - ${esc(currentUser?.role||'')}</span><button onclick="logout()">خروج</button>`}
+function go(p){if(['settings','users','audit'].includes(p)&&currentUser?.role!=='مدير النظام'){alert('لا توجد صلاحية');return}page=p;document.querySelectorAll('.page').forEach(x=>x.classList.remove('active'));document.getElementById(p).classList.add('active');nav();render()}
+function updateLists(){state.costCenters=[...new Set([...state.costCenters,...state.assets.map(a=>a.costCenter).filter(Boolean),...state.assets.flatMap(a=>allocs(a).map(x=>x.costCenter)).filter(Boolean)])];state.groups=[...new Set([...state.groups,...state.assets.map(a=>a.group).filter(Boolean)])];document.getElementById('centersList').innerHTML=state.costCenters.map(x=>`<option value="${esc(x)}">`).join('');document.getElementById('groupsList').innerHTML=state.groups.map(x=>`<option value="${esc(x)}">`).join('');}
+function render(){if(!currentUser)return;updateLists(); if(page==='dashboard')renderDashboard(); if(page==='assets')renderAssets(); if(page==='depr')renderDepr(); if(page==='io')renderIO(); if(page==='settings')renderSettings(); if(page==='users')renderUsers(); if(page==='audit')renderAudit();}
+function renderDashboard(){let cost=state.assets.reduce((s,a)=>s+totalCost(a),0), acc=state.assets.reduce((s,a)=>s+accumCalc(a),0), md=state.assets.reduce((s,a)=>s+monthlyDep(a),0);document.getElementById('dashboard').innerHTML=`<div class="grid"><div class="card kpi"><span>إجمالي تكلفة الأصول</span><b>${money(cost)}</b></div><div class="card kpi"><span>مجمع الاهلاك</span><b>${money(acc)}</b></div><div class="card kpi"><span>القيمه الصافيه</span><b>${money(cost-acc)}</b></div><div class="card kpi"><span>الاهلاك الشهري</span><b>${money(md)}</b></div></div><div class="charts"><div class="card"><h3>التكلفة حسب مركز التكلفة</h3>${bars(groupCost())}</div><div class="card"><h3>الاهلاك الشهري حسب GROUP</h3>${bars(groupDep())}</div></div><div class="card note"><b>الملف المعتمد:</b> الاستيراد والتصدير يتمان من شيت <span class="pill">${OFFICIAL_SHEET}</span> وبنفس أعمدة الملف الرئيسي الجديد بدون تغيير ترتيب الأعمدة.</div>`}
+function bars(obj){let e=Object.entries(obj).sort((a,b)=>b[1]-a[1]).slice(0,12),m=Math.max(1,...e.map(x=>x[1]));return e.map(([k,v])=>`<p><b>${esc(k)}</b> <span class="muted">${money(v)}</span></p><div class="bar"><i style="width:${Math.round(v/m*100)}%"></i></div>`).join('')||'<p class="muted">لا توجد بيانات</p>'}
+function groupCost(){let o={};state.assets.forEach(a=>allocs(a).forEach(x=>o[x.costCenter]=(o[x.costCenter]||0)+totalCost(a)*Number(x.percent||0)/100));return o}
+function groupDep(){let o={};state.assets.forEach(a=>o[a.group||'غير محدد']=(o[a.group||'غير محدد']||0)+monthlyDep(a));return o}
+function filteredAssets(){return state.assets.filter(a=>(!filters.q||JSON.stringify(a).toLowerCase().includes(filters.q.toLowerCase()))&&(!filters.cc||a.costCenter===filters.cc||allocs(a).some(x=>x.costCenter===filters.cc))&&(!filters.grp||a.group===filters.grp)&&(!filters.status||a.status===filters.status));}
+function renderAssets(){let data=filteredAssets(), pagesNo=Math.max(1,Math.ceil(data.length/pageSize));if(assetPage>pagesNo)assetPage=pagesNo;let part=data.slice((assetPage-1)*pageSize,assetPage*pageSize);document.getElementById('assets').innerHTML=`<div class="card"><h2>الأصول الثابتة</h2><div class="toolbar"><button class="btn" onclick="openAssetModal()">+ إضافة أصل</button><button class="btn secondary" onclick="document.getElementById('importFile2').click()">استيراد الملف المعتمد</button><input id="importFile2" type="file" accept=".xlsx,.xls" style="display:none" onchange="importExcel(event)"><button class="btn secondary" onclick="exportOfficial()">تصدير الملف المعتمد</button><button class="btn danger" onclick="clearData()">مسح البيانات</button><input placeholder="بحث" oninput="filters.q=this.value;assetPage=1;renderAssets()"><select onchange="filters.cc=this.value;assetPage=1;renderAssets()"><option value="">كل مراكز التكلفة</option>${state.costCenters.map(x=>`<option ${filters.cc===x?'selected':''}>${esc(x)}</option>`).join('')}</select><select onchange="filters.grp=this.value;assetPage=1;renderAssets()"><option value="">كل المجموعات</option>${state.groups.map(x=>`<option ${filters.grp===x?'selected':''}>${esc(x)}</option>`).join('')}</select></div><div class="scroll"><table><thead><tr>${HEADERS.map(h=>`<th>${h}</th>`).join('')}<th>توزيع</th><th>إجراءات</th></tr></thead><tbody>${part.map(a=>`<tr><td>${esc(a.serial)}</td><td>${esc(a.costCenter)}</td><td>${esc(a.group)}</td><td>${esc(a.purchaseDate)}</td><td>${esc(a.assetName)}</td><td>${a.qty}</td><td>${money(totalCost(a))}</td><td>${daysDep(a)}</td><td>${Number(a.depRate||0)}</td><td>${money(accumCalc(a))}</td><td>${money(nbv(a))}</td><td>${money(monthlyDep(a))}</td><td>${esc(a.status)}</td><td>${allocs(a).map(x=>esc(x.costCenter)+' '+x.percent+'%').join('<br>')}</td><td><button class="btn secondary" onclick="openAssetModal('${a.id}')">تعديل</button><button class="btn danger" onclick="delAsset('${a.id}')">حذف</button></td></tr>`).join('')}</tbody></table></div><div class="footerPages">${Array.from({length:pagesNo},(_,i)=>`<button class="${assetPage===i+1?'active':''}" onclick="assetPage=${i+1};renderAssets()">${i+1}</button>`).slice(0,20).join('')}</div></div>`}
+function openAssetModal(aid){let a=state.assets.find(x=>x.id===aid);document.getElementById('modalTitle').textContent=a?'تعديل أصل':'إضافة أصل';['serial','costCenter','group','purchaseDate','assetName','qty','totalCostInput','depRate','accumDep','status'].forEach(k=>{let def={qty:1,totalCostInput:0,depRate:.2,accumDep:0,status:'Active'}[k]??'';let el=document.getElementById(k);if(el)el.value=a?(k==='totalCostInput'?a.totalCost:(a[k]??def)):def});document.getElementById('editId').value=a?a.id:'';document.getElementById('allocType').value=a&&allocs(a).length>1?'shared':'single';document.getElementById('allocBox').innerHTML='';(a?allocs(a):[{costCenter:'',percent:100}]).forEach(x=>addAllocRow(x.costCenter,x.percent));toggleAlloc();document.getElementById('assetModal').style.display='flex'}
+function addAllocRow(cc='',pct=''){let d=document.createElement('div');d.className='allocRow';d.innerHTML=`<input list="centersList" placeholder="مركز التكلفة" value="${esc(cc)}" oninput="calcAllocSum()"><input type="number" step="any" placeholder="النسبة %" value="${esc(pct)}" oninput="calcAllocSum()"><button type="button" class="btn danger" onclick="this.parentElement.remove();calcAllocSum()">×</button>`;document.getElementById('allocBox').appendChild(d);calcAllocSum()}
+function calcAllocSum(){let s=[...document.querySelectorAll('.allocRow input[type=number]')].reduce((a,i)=>a+Number(i.value||0),0);document.getElementById('allocSum').textContent='إجمالي النسب: '+s.toFixed(2)+'%';return s}
+function toggleAlloc(){let sh=document.getElementById('allocType').value==='shared';document.getElementById('allocBox').style.display=sh?'block':'none';document.getElementById('allocSum').style.display=sh?'block':'none'}
+document.getElementById('assetForm').onsubmit=e=>{e.preventDefault();let shared=allocType.value==='shared';let allocations=shared?[...document.querySelectorAll('.allocRow')].map(r=>({costCenter:r.children[0].value||'غير محدد',percent:Number(r.children[1].value||0)})).filter(x=>x.percent>0):[{costCenter:costCenter.value||'غير محدد',percent:100}];let sum=allocations.reduce((s,x)=>s+x.percent,0);if(Math.abs(sum-100)>.01){alert('إجمالي نسب توزيع الأصل المشترك يجب أن يساوي 100%');return}let a={id:editId.value||id(),serial:serial.value,costCenter:costCenter.value||allocations[0].costCenter,account:'',assetNo:serial.value,group:group.value||'غير محدد',purchaseDate:purchaseDate.value,seq:'',assetName:assetName.value,qty:Number(qty.value||1),totalCost:Number(totalCostInput.value||0),depRate:Number(depRate.value||0),accumDep:Number(accumDep.value||0),status:status.value||'Active',allocations};let i=state.assets.findIndex(x=>x.id===a.id);if(i>=0)state.assets[i]=a;else state.assets.push(a);save();closeAssetModal();render()}
+function delAsset(x){if(!can('delete')){alert('لا توجد صلاحية للحذف');return}if(confirm('حذف الأصل؟')){state.assets=state.assets.filter(a=>a.id!==x);save();renderAssets()}}
+function clearData(){if(!can('delete')){alert('لا توجد صلاحية للمسح');return}if(confirm('سيتم مسح بيانات الأصول بالكامل')){state.assets=[];save();render()}}
+function renderDepr(){let js=journal(), rows=js.rows.map(j=>`<tr><td>${esc(j.costCenter)}</td><td>${esc(j.account)}</td><td>${j.debit===''?'':money(j.debit)}</td><td>${j.credit===''?'':money(j.credit)}</td><td>${esc(j.note)}</td></tr>`).join('');let total=`<tr style="font-weight:700;background:#f8fafc"><td>${js.rows.length}</td><td>إجمالي القيد</td><td>${money(js.totalDebit)}</td><td>${money(js.totalCredit)}</td><td></td></tr>`;document.getElementById('depr').innerHTML=`<div class="card"><h2>قيد الإهلاك الشهري</h2><div class="alert">القيد بنفس شكل الشيت المرفق، ومجمع حسب <b>مركز التكلفة + المجموعة</b>. يتم إنشاء سطر مدين لمصروف الإهلاك وسطر دائن لمجمع الإهلاك لكل مركز تكلفة ومجموعة.</div><div class="toolbar"><button class="btn" onclick="postDep()">ترحيل الإهلاك للشهر الحالي</button><button class="btn secondary" onclick="exportJournal()">تصدير القيد Excel</button></div><div class="scroll journalScroll"><table><thead><tr><th>مركز التكلفة</th><th>الحساب</th><th>مدين</th><th>دائن</th><th>ملاحظات</th></tr></thead><tbody>${rows}${total}</tbody></table></div></div>`}
+function journal(){let debit={},credit={};state.assets.forEach(a=>{let dep=monthlyDep(a); if(dep<=0)return;let grp=(a.group||a.account||'غير محدد').trim();allocs(a).forEach(x=>{let v=dep*Number(x.percent||0)/100;if(!v)return;let costCenter=(x.costCenter||a.costCenter||'بدون مركز تكلفة').trim();let key=costCenter+'||'+grp;debit[key]=(debit[key]||0)+v;credit[key]=(credit[key]||0)+v})});let rows=[];Object.entries(debit).sort().forEach(([key,v])=>{let [costCenter,grp]=key.split('||');rows.push({costCenter,account:`مصروف إهلاك ${grp}`,debit:v,credit:'',note:'مصروف إهلاك'})});Object.entries(credit).sort().forEach(([key,v])=>{let [costCenter,grp]=key.split('||');rows.push({costCenter,account:`مجمع إهلاك ${grp}`,debit:'',credit:v,note:'مجمع إهلاك'})});let totalDebit=rows.reduce((s,r)=>s+Number(r.debit||0),0), totalCredit=rows.reduce((s,r)=>s+Number(r.credit||0),0);return {rows,totalDebit,totalCredit}}
+function postDep(){if(!can('edit')){alert('لا توجد صلاحية لترحيل الإهلاك');return}if(!confirm('سيتم إضافة الإهلاك الشهري إلى مجمع الاهلاك لكل أصل. متابعة؟'))return;state.assets=state.assets.map(a=>({...a,accumDep:accumCalc(a)+monthlyDep(a)}));logAction('ترحيل الإهلاك الشهري','عدد الأصول: '+state.assets.length);save();render();alert('تم الترحيل')}
+function renderIO(){document.getElementById('io').innerHTML=`<div class="card"><h2>الاستيراد والتصدير حسب الملف المعتمد</h2><div class="alert ok"><b>المعتمد:</b> شيت ${OFFICIAL_SHEET} — صف العناوين رقم 5 — البيانات تبدأ من الصف 6 — عدد الأعمدة 13 عمودًا.</div><div class="toolbar"><button class="btn" onclick="document.getElementById('importFile').click()">استيراد Excel</button><input id="importFile" type="file" accept=".xlsx,.xls" style="display:none" onchange="importExcel(event)"><button class="btn secondary" onclick="exportOfficial()">تصدير Excel مطابق</button><button class="btn secondary" onclick="downloadTemplate()">تنزيل قالب فارغ</button></div><table><tbody>${HEADERS.map((h,i)=>`<tr><td>${i+1}</td><td>${h}</td></tr>`).join('')}</tbody></table></div>`}
+function renderSettings(){document.getElementById('settings').innerHTML=`<div class="grid"><div class="card"><h3>مراكز التكلفة</h3><textarea id="ccText" style="width:100%;height:180px">${state.costCenters.join('\n')}</textarea><button class="btn" onclick="saveCenters()">حفظ</button></div><div class="card"><h3>مجموعات الأصول GROUP</h3><textarea id="grpText" style="width:100%;height:180px">${state.groups.join('\n')}</textarea><button class="btn" onclick="saveGroups()">حفظ</button></div><div class="card"><h3>قيد الإهلاك</h3><p class="muted">القيد ثابت حسب الشيت المرفق: مركز التكلفة، الحساب، مدين، دائن، ملاحظات. التجميع دائمًا حسب مركز التكلفة + المجموعة.</p></div><div class="card"><h3>اهلاك من 1-1 إلى 31-8</h3><input id="mths" type="number" value="${state.settings.ytdMonths||8}"><button class="btn" onclick="state.settings.ytdMonths=Number(mths.value||8);save();render()">حفظ عدد الشهور</button></div></div>`}
+function saveCenters(){state.costCenters=ccText.value.split('\n').map(x=>x.trim()).filter(Boolean);save();render()}function saveGroups(){state.groups=grpText.value.split('\n').map(x=>x.trim()).filter(Boolean);save();render()}
+function renderUsers(){document.getElementById('users').innerHTML=`<div class="card"><h2>المستخدمين والصلاحيات</h2><div class="alert ok small">المدير الافتراضي: admin / 123456. يفضل تغيير كلمة المرور بعد أول تشغيل.</div><div class="toolbar"><input id="uUser" placeholder="اسم الدخول"><input id="uName" placeholder="اسم الموظف"><input id="uPass" type="password" placeholder="كلمة المرور"><select id="uRole"><option>مدير النظام</option><option>إضافة وتعديل وحذف</option><option>إضافة وتعديل فقط</option><option>عرض فقط</option></select><button class="btn" onclick="addUser()">إضافة مستخدم</button></div><table><thead><tr><th>اسم الدخول</th><th>المستخدم</th><th>الصلاحية</th><th>نشط</th><th>تغيير كلمة المرور</th><th></th></tr></thead><tbody>${state.users.map((u,i)=>`<tr><td>${esc(u.username)}</td><td>${esc(u.name)}</td><td>${esc(u.role)}</td><td><select onchange="state.users[${i}].active=this.value;logAction('تعديل حالة مستخدم','${esc(u.username)}');save();renderUsers()"><option ${u.active==='نعم'?'selected':''}>نعم</option><option ${u.active==='لا'?'selected':''}>لا</option></select></td><td><input id="pw${i}" type="password" placeholder="كلمة مرور جديدة"><button class="btn secondary" onclick="changePass(${i})">حفظ</button></td><td><button class="btn danger" onclick="deleteUser(${i})">حذف</button></td></tr>`).join('')}</tbody></table></div>`}
+function addUser(){if(!uUser.value||!uPass.value){alert('أدخل اسم الدخول وكلمة المرور');return}if(state.users.some(x=>x.username===uUser.value.trim())){alert('اسم الدخول موجود بالفعل');return}state.users.push({username:uUser.value.trim(),name:uName.value.trim()||uUser.value.trim(),password:hashPass(uPass.value),role:uRole.value,active:'نعم'});logAction('إضافة مستخدم',uUser.value.trim());save();renderUsers()}
+function changePass(i){let el=document.getElementById('pw'+i);if(!el.value)return;state.users[i].password=hashPass(el.value);logAction('تغيير كلمة مرور',state.users[i].username);save();renderUsers()}
+function deleteUser(i){if(state.users[i].username==='admin'){alert('لا يمكن حذف admin');return}if(confirm('حذف المستخدم؟')){logAction('حذف مستخدم',state.users[i].username);state.users.splice(i,1);save();renderUsers()}}
+function renderAudit(){document.getElementById('audit').innerHTML=`<div class="card"><h2>سجل العمليات</h2><div class="toolbar"><button class="btn danger" onclick="if(confirm('مسح سجل العمليات؟')){state.audit=[];save();renderAudit()}">مسح السجل</button></div><table><thead><tr><th>التاريخ</th><th>المستخدم</th><th>العملية</th><th>التفاصيل</th></tr></thead><tbody>${state.audit.map(a=>`<tr><td>${esc(a.date)}</td><td>${esc(a.name||a.user)}</td><td>${esc(a.action)}</td><td>${esc(a.details)}</td></tr>`).join('')}</tbody></table></div>`}
+function ensureXLSX(){if(!window.XLSX){alert('مكتبة Excel غير محملة. شغل الملف مع الإنترنت مرة واحدة أو استخدم النسخة المرفق معها مكتبة SheetJS.');return false}return true}
+function excelDate(v){if(!v)return '';if(typeof v==='number'){let d=XLSX.SSF.parse_date_code(v);return `${d.y}-${String(d.m).padStart(2,'0')}-${String(d.d).padStart(2,'0')}`}let s=String(v).trim();if(/^\d{4}-\d{2}-\d{2}/.test(s))return s.slice(0,10);let m=s.match(/(\d{1,2})[-\/](\d{1,2})[-\/](\d{4})/);return m?`${m[3]}-${m[2].padStart(2,'0')}-${m[1].padStart(2,'0')}`:s.slice(0,10)}
+function getCell(ws,r,c){let v=ws[XLSX.utils.encode_cell({r,c})];return v?v.v:''}
+function importExcel(ev){if(!ensureXLSX())return;let f=ev.target.files[0];if(!f)return;let fr=new FileReader();fr.onload=e=>{let wb=XLSX.read(e.target.result,{type:'array',cellDates:false}), ws=wb.Sheets[OFFICIAL_SHEET]||wb.Sheets[wb.SheetNames[0]];let range=XLSX.utils.decode_range(ws['!ref']||'A1:M1');let headerRow=-1, headerMap={};for(let r=0;r<=Math.min(range.e.r,25);r++){let vals=[];for(let c=0;c<=Math.min(range.e.c,25);c++)vals.push(String(getCell(ws,r,c)).trim());if(vals.includes('مسلسل')&&vals.includes('مركز التكلفة')&&(vals.includes('المجموعة')||vals.includes('GROUP'))){headerRow=r;vals.forEach((v,i)=>{if(v)headerMap[v]=i});break}}
+if(headerRow<0){alert('لم يتم العثور على صف عناوين الملف المعتمد. تأكد من استخدام ملف الأصول الرئيسي الجديد.');return}
+let col=(names,def)=>{for(let n of names){if(headerMap[n]!=null)return headerMap[n]}return def};let C={serial:col(['مسلسل'],0),costCenter:col(['مركز التكلفة'],1),group:col(['المجموعة','GROUP'],2),purchaseDate:col(['تاريخ الشراء'],3),assetName:col(['إسم الأصل','اسم الأصل'],4),qty:col(['عدد الوحدات'],5),totalCost:col(['اجمالي التكلفة','إجمالي التكلفة'],6),daysDep:col(['أيام الاهلاك','أيام الإهلاك'],7),depRate:col(['نسبة الاهلاك','نسبة الإهلاك'],8),accumDep:col(['مجمع الاهلاك','مجمع الإهلاك'],9),nbv:col(['القيمه الصافيه','القيمة الصافية'],10),monthly:col(['الاهلاك الشهري','الإهلاك الشهري'],11),status:col(['الحالة'],12)};
+let assets=[];for(let r=headerRow+1;r<=range.e.r;r++){let row=[];for(let c=0;c<=range.e.c;c++)row[c]=getCell(ws,r,c);if(row.every(x=>x===''||x==null))continue;let a={id:id(),serial:row[C.serial],costCenter:row[C.costCenter]||'غير محدد',account:'',assetNo:row[C.serial],group:row[C.group]||'غير محدد',purchaseDate:excelDate(row[C.purchaseDate]),seq:'',assetName:row[C.assetName],qty:Number(row[C.qty])||1,totalCost:Number(row[C.totalCost])||0,daysDep:Number(row[C.daysDep])||0,depRate:Number(row[C.depRate])||0,accumDep:Number(row[C.accumDep])||0,status:row[C.status]||'Active',allocations:[{costCenter:row[C.costCenter]||'غير محدد',percent:100}]};if(a.serial||a.assetName)assets.push(a)}state.assets=assets;logAction('استيراد ملف الأصول','عدد الأصول: '+assets.length);save();assetPage=1;go('assets');alert('تم استيراد '+assets.length+' أصل من ملف الأصول الرئيسي الجديد')};fr.readAsArrayBuffer(f)}
+function assetToRow(a){return [a.serial,a.costCenter,a.group,dateToExcel(a.purchaseDate),a.assetName,a.qty,totalCost(a),null,Number(a.depRate||0),null,null,null,a.status]}
+function dateToExcel(s){if(!s)return '';let d=new Date(s+'T00:00:00');return isNaN(d)?s:(d- new Date(Date.UTC(1899,11,30)))/86400000}
+function applyCommonSheetStyle(ws, rangeRef){
+let range=XLSX.utils.decode_range(rangeRef);
+for(let R=range.s.r;R<=range.e.r;R++){
+  for(let C=range.s.c;C<=range.e.c;C++){
+    let addr=XLSX.utils.encode_cell({r:R,c:C});
+    if(!ws[addr]) ws[addr]={t:'s',v:''};
+    ws[addr].s=ws[addr].s||{};
+    ws[addr].s.alignment={horizontal:'right',vertical:'center',readingOrder:2};
+    ws[addr].s.font={name:'Arial',sz:11,color:{rgb:'000000'}};
+  }
+}}
+function borderAll(){return {top:{style:'thin',color:{rgb:'D9E2F3'}},bottom:{style:'thin',color:{rgb:'D9E2F3'}},left:{style:'thin',color:{rgb:'D9E2F3'}},right:{style:'thin',color:{rgb:'D9E2F3'}}}}
+function officialWorkbook(blank=false){
+let wb=XLSX.utils.book_new(), data=[];
+data[0]=['','','قائمة الاصول الثابته','','','التاريخ:- ',new Date()];
+data[1]=['','','01-01-2021 - 29-12-2025'];
+data[4]=HEADERS;
+let list=blank?[]:state.assets;
+list.forEach((a,i)=>{data[5+i]=assetToRow(a)});
+let ws=XLSX.utils.aoa_to_sheet(data);
+let lastRow=Math.max(5,5+list.length);
+ws['!ref']=XLSX.utils.encode_range({s:{r:0,c:0},e:{r:lastRow,c:12}});
+ws['!merges']=[{s:{r:0,c:2},e:{r:0,c:4}},{s:{r:1,c:2},e:{r:1,c:4}}];
+ws['!views']=[{rightToLeft:true}];
+ws['!cols']=[{wch:10},{wch:34},{wch:38},{wch:14},{wch:55},{wch:12},{wch:16},{wch:14},{wch:13},{wch:16},{wch:16},{wch:16},{wch:12}];
+applyCommonSheetStyle(ws, ws['!ref']);
+['C1','C2','F1','G1'].forEach(a=>{if(ws[a])ws[a].s={font:{name:'Arial',sz:a==='C1'?16:12,bold:true,color:{rgb:'000000'}},alignment:{horizontal:'center',vertical:'center',readingOrder:2}}});
+if(ws['G1']){ws['G1'].z='dd-mm-yyyy';}
+for(let c=0;c<13;c++){
+  let cell=XLSX.utils.encode_cell({r:4,c});
+  if(ws[cell])ws[cell].s={font:{name:'Arial',sz:11,bold:true,color:{rgb:'000000'}},fill:{patternType:'solid',fgColor:{rgb:'DDEFEA'}},alignment:{horizontal:'center',vertical:'center',readingOrder:2},border:borderAll()};
+}
+for(let r=5;r<5+list.length;r++){
+  let rr=r+1;
+  ws['H'+rr]={t:'n',f:`IF(D${rr}="","",TODAY()-D${rr})`,s:{border:borderAll(),alignment:{horizontal:'center',vertical:'center'}}};
+  ws['J'+rr]={t:'n',f:`MIN(G${rr}-1,(G${rr}*I${rr}/365)*H${rr})`,s:{border:borderAll(),numFmt:'#,##0.00'}};
+  ws['K'+rr]={t:'n',f:`G${rr}-J${rr}`,s:{border:borderAll(),numFmt:'#,##0.00'}};
+  ws['L'+rr]={t:'n',f:`G${rr}*I${rr}/12`,s:{border:borderAll(),numFmt:'#,##0.00'}};
+  ['D','G','I','J','K','L'].forEach(col=>{let a=col+rr;if(ws[a])ws[a].z=col==='D'?'dd-mm-yyyy':(col==='I'?'0.00%':'#,##0.00')});
+  for(let c=0;c<13;c++){let a=XLSX.utils.encode_cell({r,c});if(ws[a]){ws[a].s=Object.assign({border:borderAll(),alignment:{horizontal:'right',vertical:'center',readingOrder:2},font:{name:'Arial',sz:11}},ws[a].s||{});}}
+}
+XLSX.utils.book_append_sheet(wb,ws,OFFICIAL_SHEET);return wb}
+function exportOfficial(){if(!ensureXLSX())return;XLSX.writeFile(officialWorkbook(false),'الاصول الثابتة جديد - تصدير من الداشبورد.xlsx',{cellStyles:true})}
+function downloadTemplate(){if(!ensureXLSX())return;XLSX.writeFile(officialWorkbook(true),'قالب الاصول الثابتة المعتمد.xlsx',{cellStyles:true})}
+function exportJournal(){
+if(!ensureXLSX())return;
+let js=journal();
+let rows=[['مركز التكلفة','الحساب','مدين','دائن','ملاحظات'],...js.rows.map(j=>[j.costCenter,j.account,j.debit,j.credit,j.note]),[js.rows.length,'إجمالي القيد',js.totalDebit,js.totalCredit,'']];
+let ws=XLSX.utils.aoa_to_sheet(rows), wb=XLSX.utils.book_new();
+let last=rows.length;
+ws['!ref']=`A1:E${last}`;
+ws['!views']=[{rightToLeft:true}];
+ws['!cols']=[{wch:36},{wch:55},{wch:18},{wch:18},{wch:18}];
+applyCommonSheetStyle(ws, ws['!ref']);
+for(let c=0;c<5;c++){let a=XLSX.utils.encode_cell({r:0,c});ws[a].s={font:{name:'Arial',sz:11,bold:true,color:{rgb:'000000'}},fill:{patternType:'solid',fgColor:{rgb:'DDEFEA'}},alignment:{horizontal:'center',vertical:'center',readingOrder:2},border:borderAll()};}
+for(let r=1;r<last;r++){
+ for(let c=0;c<5;c++){let a=XLSX.utils.encode_cell({r,c}); if(ws[a]) ws[a].s=Object.assign({font:{name:'Arial',sz:11},alignment:{horizontal:'right',vertical:'center',readingOrder:2},border:borderAll()}, ws[a].s||{});}
+ ['C','D'].forEach(col=>{let a=col+(r+1);if(ws[a]){ws[a].z='#,##0.00';ws[a].s.numFmt='#,##0.00';}});
+}
+for(let c=0;c<5;c++){let a=XLSX.utils.encode_cell({r:last-1,c});if(ws[a])ws[a].s=Object.assign(ws[a].s||{},{font:{name:'Arial',sz:11,bold:true},fill:{patternType:'solid',fgColor:{rgb:'F2F2F2'}},border:borderAll()});}
+XLSX.utils.book_append_sheet(wb,ws,'قيد الاهلاك');
+XLSX.writeFile(wb,'قيد الاهلاك الشهري.xlsx',{cellStyles:true});
+}
+save();boot();
+</script>
+</body>
+</html>
